@@ -1,5 +1,12 @@
 const {Shop, Item} = require("../src/gilded_rose");
 
+describe("shop", function() {
+  it("should have items", function() {
+    const gildedRose = new Shop();
+    expect(gildedRose.items).toStrictEqual([]);
+  });
+});
+
 describe("default item", function() {
   it("should decrease quality over time by 1", function() {
     const gildedRose = new Shop([new Item("default", 10, 2)]);
@@ -11,6 +18,12 @@ describe("default item", function() {
     const gildedRose = new Shop([new Item("default", 0, 10)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).toBe(8);
+  });
+
+  it("should decrease quality by 2 when sellIn < 0 and quality < 0", function() {
+    const gildedRose = new Shop([new Item("default", 0, 0)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(0);
   });
 
   it("should decrease sellIn over time by 1", function() {
@@ -103,10 +116,19 @@ describe("Sulfuras, Hand of Ragnaros", function() {
     const items = gildedRose.updateQuality();
     expect(items[0].sellIn).toBe(20);
   });
+});
 
-  // it("sellIn never changes", function() {
-  //   const gildedRose = new Shop([new Item("Sulfuras, Hand of Ragnaros", 20, 80)]);
-  //   const items = gildedRose.updateQuality();
-  //   expect(items[0].sellIn).toBe(20);
-  // });
+
+describe("Conjured", function() {
+  it("quality decreases twice as fast", function() {
+    const gildedRose = new Shop([new Item("Conjured", 20, 40)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(38);
+  });
+
+  it("quality decreases x4 when sellIn < 0", function() {
+    const gildedRose = new Shop([new Item("Conjured", -1, 40)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).toBe(36);
+  });
 });
